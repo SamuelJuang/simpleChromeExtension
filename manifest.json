@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Work Timer & Weather Check",
+    "description": "Base Level Extension",
+    "version": "1.0",
+    "action": {
+      "default_popup": "hello.html",
+      "default_icon": "./images/partly_cloudy.png"
+    },
+    "background": {
+      "service_worker": "api.js"
+    },
+    "host_permissions": [
+      "https://api.openweathermap.org/*"
+    ]
+  }
