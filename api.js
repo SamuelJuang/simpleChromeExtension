@@ -171,6 +171,9 @@ function setTimer() {
     chrome.storage.sync.set({"timer": setTime.getTime()}, function(){
       console.log("timer set");
     });
+    setInterval(updateTimer, 1000);
+    updateTimer();
+    checkTimer();
   }catch(e){
     console.log("error setting timer");
   }
@@ -184,7 +187,5 @@ function clearTimer() {
 }
 setInterval(updateClock, 1000);
 updateClock();
-setInterval(updateTimer, 1000);
-updateTimer();
-checkTimer();
+
 waitForData();
