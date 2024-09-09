@@ -7,9 +7,20 @@
       "default_popup": "hello.html",
       "default_icon": "./images/partly_cloudy.png"
     },
-    "background": {
-      "service_worker": "api.js"
-    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "css" : ["index.css"],
+        "js": ["api.js"]
+      }
+    ],
+    "permissions": [
+      "storage",
+      "activeTab",
+      "scripting",
+      "tabs",
+      "geolocation"
+    ],
     "host_permissions": [
       "https://api.openweathermap.org/*"
     ]

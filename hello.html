@@ -2,7 +2,12 @@
 <html>
   <head>
     <title>Weather App</title>
-    <link rel="stylesheet" href="index.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.2/css/bulma.css"
@@ -13,48 +18,80 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+   
   </head>
   <!-- class="shadow-lg rounded" body class, not work. chrome extension is square -->
-  <body style="width: 390px;">
-    <div id="main" class="is-flex is-flex-direction-row skeleton-block p-3 gap-3 w-100">
+  <body id="body" class="skeleton-block" style="width: 450px">
+    <div id="main" class="is-flex is-flex-direction-row p-3 gap-3 w-100">
       <!-- temps and weather -->
       <div
-        class="w-50 d-flex flex-column justify-content-start align-items-center p-3 shadow-lg p-3 bg-white p-2 text-dark bg-opacity-50 rounded"
+        class="w-50 d-flex flex-column justify-content-start align-items-center p-3 shadow-lg p-3 bg-white p-2 text-dark bg-opacity-75 rounded skeleton-lines"
       >
-      <h4 class="text-center" id ="location"></h4>
+        <div><h4 class="text-center fw-bold" id="location"></h4></div>
         <img
           id="weather_image"
-          src="./images/heavy_rain.png"
+          src="./images/cloudy.png"
           alt="weather_status"
-          style="height: 75px; width: 75px;"
+          style="height: 75px; width: 75px"
         />
-        <p class="text-center" id="temp"></p>
-        <p class="text-center" id="content"></p>
+        <div class="mb-2" id="time"></div>
+        <div><p class="text-center fw-bold" id="temp"></p></div>
+        <div><p class="text-center" id="content"></p></div>
       </div>
       <!-- detailed information -->
-      <div class=" w-50 d-flex flex-column justify-content-start align-items-center p-3 shadow-lg p-3 bg-white p-2 text-dark bg-opacity-50 rounded overflow-auto">
-        <div id="time"></div>
-        <div>
-          <h3>Details</h3>
-          <p id="humidity"></p>
-          <p id="wind"></p>
-          <p id="pressure"></p>
-          <p id="feelslike"></p>
+      <div
+        class="w-50 d-flex flex-column justify-content-start align-items-center p-3 shadow-lg p-3 bg-white p-2 text-dark bg-opacity-75 rounded overflow-auto"
+      >
+        <div
+          class="text-center skeleton-lines d-flex flex-column justify-content-center align-items-center"
+        >
+          <div><h3>Details</h3></div>
+          <div class="d-flex flex-row justify-content-center">
+            <i class="fa-solid fa-droplet pt-1 pe-1"></i>
+            <p id="humidity"></p>
+          </div>
+          <div class="d-flex flex-row justify-content-center">
+            <i class="fa-solid fa-wind pt-1 pe-1"></i>
+            <p id="wind"></p>
+          </div>
+          <div><p id="feelslike"></p></div>
+          <div id="jamMasuk">
+            <label for="masuk">Work Timer</label>
+            <div class="d-flex flex-row gap-1">
+              <input
+                type="time"
+                class="form-control"
+                id="masuk"
+                value="01:00"
+              />
+              <button id="timerBtn" class="btn btn-primary">Go</button>
+              
+            </div>
+          </div>
+        <div id="jamKeluar" class="d-none">
+          <p id="timer"></p>
+          <button id="endTimer" class="btn btn-danger">End</button>
+        </div>
         </div>
       </div>
     </div>
-    <script src="api.js"></script>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js">
-       let currtime = moment().format("MMMM Do YYYY, h:mm:ss a").tz("Indonesia/Jakarta");
-       document.getElementById("time").innerHTML = currtime;
-    </script>
-    <script>
-     
-    </script>
+    <script src="api.js" type="module" defer></script>
   </body>
 </html>
