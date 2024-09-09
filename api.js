@@ -1,3 +1,4 @@
+// get location latitude an dlongitude, needs promise because it is async and returns a callback
 function getCurrentLocation() {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
@@ -17,13 +18,12 @@ function getCurrentLocation() {
 
 const apikey = "appid=9d501e56a8e930079560a69ea2acf9b7";
 
-// Make a GET request
+// Make a GET request to the OpenWeatherMap API
 const userAction = async () => {
   try {
     const { latitude, longitude } = await getCurrentLocation();
     const formatting = `lat=${latitude}&lon=${longitude}&`;
     const apiUrl = `https://api.openweathermap.org/data/2.5/weather?${formatting}${apikey}`;
-    console.log(apiUrl);
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
@@ -36,10 +36,8 @@ const userAction = async () => {
       throw new Error("Network response was not ok");
     }
 
-    const myJson = await response.json(); // Extract JSON from the HTTP response
-    console.log(myJson);
+    const myJson = await response.json();
 
-    // Update the DOM with the data
     return myJson;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -47,16 +45,19 @@ const userAction = async () => {
   }
 };
 
+// Convert Kelvin to Celsius, because API returns kelvin for whatever reason
 const convertKelvinToCelsius = (kelvin) => {
   return Math.round(kelvin - 273.15);
 };
 
-console.log("hello");
+
+// the actual function that gets the data and updates the DOM
 const waitForData = async () => {
   const data = await userAction();
   document.getElementById("location").innerHTML = data.name;
   var temps = String(convertKelvinToCelsius(data.main.temp));
   document.getElementById("temp").innerHTML = temps + " &deg;C";
+  // remove the skeleton block when the data is loaded
   document.getElementById("body").classList.remove("skeleton-block");
   document.getElementById("humidity").innerHTML = data.main.humidity + "%";
   document.getElementById("wind").innerHTML = data.wind.speed + " m/s";
@@ -65,12 +66,15 @@ const waitForData = async () => {
     String(convertKelvinToCelsius(data.main.feels_like)) +
     " &deg;C";
   document.getElementById("content").innerHTML = data.weather[0].description;
+
+  // set the weather image, provided by the API's icon code
   document.getElementById(
     "weather_image"
   ).src = `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
   chrome.action.setIcon({
     path: `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`,
   });
+  // set the background image based on the weather, using the weather's id
   document.body.style.backgroundRepeat = "no-repeat";
   document.body.style.backgroundSize = "cover";
   document.body.style.backgroundImage =
@@ -97,12 +101,16 @@ const waitForData = async () => {
     document.body.style.backgroundImage =
       "url(https://images.unsplash.com/photo-1457528877294-b48235bdaa68)";
   }
-  console.log(data);
+  // console.log(data);
+  // remove the skeleton lines when the data is loaded
   document.querySelectorAll("div").forEach((item) => {
     item.classList.remove("skeleton-lines");
   });
 };
 
+// makes the clock work and updates every second using the set interval of 1000 miliseconds
+//  clock is formatted to locale of Indonesia, 24 hour format
+// TODO: Localize the clock to the user's location
 function updateClock() {
   const now = new Date();
   const options = {
@@ -115,10 +123,12 @@ function updateClock() {
   document.getElementById("time").textContent = timeString;
 }
 
+// For the timer
 var setTime;
-
+// set the timer using the timerBtn component
 document.getElementById("timerBtn").addEventListener("click", setTimer);
 
+// check if there is a timer set
 function checkTimer(){
   if(setTime){  
     document.getElementById("jamMasuk").classList.add("d-none");
@@ -132,6 +142,7 @@ function checkTimer(){
   }
 }
 
+// update the timer based on the time set, using differences and modulus
 function updateTimer(){
   if(setTime){
     var now = new Date();
@@ -148,17 +159,19 @@ function updateTimer(){
     }
   }
 }
-
+// add hours to date, used to set timer with hours and minutes
 Date.prototype.addHours = function(h) {
   this.setTime(this.getTime() + (h*60*60*1000));
   return this;
 }
-
+// add minutes to date
 Date.prototype.addMinutes = function(mins) {
   this.setTime(this.getTime() + (mins*60*1000));
   return this;
 }
 
+// set the timer by taking the value of the input form 
+//then setting the timer by adding hours and minutes that have been set in the input form
 function setTimer() {
   event.preventDefault();
   var time = document.getElementById("masuk").value;
@@ -171,6 +184,7 @@ function setTimer() {
     chrome.storage.sync.set({"timer": setTime.getTime()}, function(){
       console.log("timer set");
     });
+    // run the timer down every second
     setInterval(updateTimer, 1000);
     updateTimer();
     checkTimer();
@@ -180,12 +194,16 @@ function setTimer() {
   console.log(setTime);
   checkTimer();
 }
+// reset the timer
 document.getElementById("endTimer").addEventListener("click", clearTimer);
 function clearTimer() {
   setTime = null;
   checkTimer();
 }
+
+// update the clock every second
 setInterval(updateClock, 1000);
 updateClock();
 
+// wait for the data to load from the API
 waitForData();
