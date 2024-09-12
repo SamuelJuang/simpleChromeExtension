@@ -130,12 +130,26 @@ document.getElementById("timerBtn").addEventListener("click", setTimer);
 
 // check if there is a timer set
 function checkTimer(){
+  
   if(setTime){  
     document.getElementById("jamMasuk").classList.add("d-none");
     document.getElementById("jamKeluar").classList.remove("d-none");
     document.getElementById("jamKeluar").classList.add("d-block");
   }else{
-    console.log("no timer set");
+    try{
+      chrome.storage.local.get("timer", function(data){
+        setTime = data.timer;
+        console.log(setTime);
+        if(setTime){
+          // console.log("timer set");
+          runTimer();
+        }else{
+          // console.log("no timer set");
+        }
+      });
+    }catch(e){
+      console.log("error getting timer");
+    }
     document.getElementById("jamKeluar").classList.add("d-none");
     document.getElementById("jamMasuk").classList.remove("d-none");
     document.getElementById("jamMasuk").classList.add("d-block");
@@ -150,6 +164,7 @@ function updateTimer(){
     if(diff < 0){
       setTime = null;
       checkTimer();
+      clearTimer();
     }else{
       var hours = Math.floor(diff / 1000 / 60 / 60);
       var minutes = Math.floor(diff / 1000 / 60) % 60;
@@ -181,13 +196,11 @@ function setTimer() {
   date.addMinutes(Number(time[1]));
   setTime = date;
   try{
-    chrome.storage.sync.set({"timer": setTime.getTime()}, function(){
-      console.log("timer set");
+    chrome.storage.local.set({"timer": setTime.getTime()}, function(){
+      // console.log("timer set");
     });
     // run the timer down every second
-    setInterval(updateTimer, 1000);
-    updateTimer();
-    checkTimer();
+    runTimer();
   }catch(e){
     console.log("error setting timer");
   }
@@ -198,9 +211,23 @@ function setTimer() {
 document.getElementById("endTimer").addEventListener("click", clearTimer);
 function clearTimer() {
   setTime = null;
+  try{
+    chrome.storage.local.remove("timer", function(){
+      // console.log("timer cleared");
+    });
+  }catch(e){
+    console.log("error clearing timer");
+  }
   checkTimer();
 }
 
+const runTimer = () => {
+  setInterval(updateTimer, 1000);
+  updateTimer();
+  checkTimer();
+}
+
+checkTimer();
 // update the clock every second
 setInterval(updateClock, 1000);
 updateClock();

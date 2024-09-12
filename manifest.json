@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Work Timer & Weather Check",
-    "description": "Base Level Extension",
+    "description": "Extension that shows the current weather and a timer to help you focus on work.",
     "version": "1.0",
     "action": {
       "default_popup": "hello.html",
